@@ -35,6 +35,12 @@ DUMP_URL = (
     "eswiktionary-latest-pages-articles.xml.bz2"
 )
 
+# Wikimedia exige un User-Agent que diga quien eres; con el de Python da 403.
+USER_AGENT = (
+    "LecturDictionaryBuilder/1.0 "
+    "(https://github.com/JAVIERLAHOZ1/App-lectur) Python-urllib"
+)
+
 MAX_DEFINICIONES = 3
 MAX_LARGO_DEFINICION = 320
 
@@ -295,21 +301,49 @@ def paginas(origen) -> "iter":
         yield titulo, texto
 
 
-def descarga(url: str, destino: str) -> str:
+def descarga(url: str, destino: str, intentos: int = 4) -> str:
+    """
+    Baja el volcado. Wikimedia rechaza los agentes genericos (da 403), asi que
+    hay que identificarse como manda su politica de User-Agent.
+    """
     if os.path.exists(destino) and os.path.getsize(destino) > 1_000_000:
         print(f"Volcado ya descargado: {destino}")
         return destino
-    print(f"Descargando {url}")
-    inicio = time.time()
-    with urllib.request.urlopen(url) as respuesta, open(destino, "wb") as salida:
-        while True:
-            trozo = respuesta.read(1 << 20)
-            if not trozo:
-                break
-            salida.write(trozo)
-    megas = os.path.getsize(destino) / (1024 * 1024)
-    print(f"Descargado {megas:.0f} MB en {time.time() - inicio:.0f} s")
-    return destino
+
+    peticion = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": USER_AGENT,
+            "Accept-Encoding": "identity",
+        },
+    )
+
+    ultimo_error: Exception | None = None
+    for intento in range(1, intentos + 1):
+        print(f"Descargando {url} (intento {intento}/{intentos})", flush=True)
+        inicio = time.time()
+        try:
+            with urllib.request.urlopen(peticion, timeout=120) as respuesta:
+                with open(destino, "wb") as salida:
+                    while True:
+                        trozo = respuesta.read(1 << 20)
+                        if not trozo:
+                            break
+                        salida.write(trozo)
+            megas = os.path.getsize(destino) / (1024 * 1024)
+            print(f"Descargado {megas:.0f} MB en {time.time() - inicio:.0f} s")
+            return destino
+        except Exception as error:  # noqa: BLE001 - se reintenta con cualquier fallo
+            ultimo_error = error
+            print(f"  fallo: {error}", flush=True)
+            if os.path.exists(destino):
+                os.remove(destino)
+            if intento < intentos:
+                espera = 5 * (2 ** (intento - 1))
+                print(f"  reintentando en {espera} s", flush=True)
+                time.sleep(espera)
+
+    raise SystemExit(f"No se ha podido descargar el volcado: {ultimo_error}")
 
 
 def construye(volcado: str, salida: str, limite: int = 0) -> None:
@@ -363,6 +397,52 @@ def construye(volcado: str, salida: str, limite: int = 0) -> None:
     print(
         f"Listo: {guardadas} entradas de {leidas} paginas -> {salida} ({megas:.1f} MB)"
     )
+
+    if not limite:
+        verifica(salida)
+
+
+PALABRAS_CONTROL = [
+    "casa",
+    "decir",
+    "libro",
+    "libros",
+    "dijo",
+    "agua",
+    "tiempo",
+    "correr",
+    "hermoso",
+    "melancolia",
+]
+
+
+def verifica(ruta: str) -> None:
+    """Comprueba que el diccionario no ha salido vacio ni roto."""
+    conexion = sqlite3.connect(ruta)
+    total = conexion.execute("SELECT COUNT(*) FROM entradas").fetchone()[0]
+    distintas = conexion.execute("SELECT COUNT(DISTINCT clave) FROM entradas").fetchone()[0]
+    print(f"\nComprobacion: {total} acepciones, {distintas} palabras distintas")
+
+    faltan = []
+    for palabra in PALABRAS_CONTROL:
+        fila = conexion.execute(
+            "SELECT palabra, acepciones FROM entradas WHERE clave = ? LIMIT 1",
+            (clave_de(palabra),),
+        ).fetchone()
+        if fila:
+            primera = fila[1].splitlines()[0]
+            print(f"  {palabra:>12} -> {primera[:88]}")
+        else:
+            faltan.append(palabra)
+            print(f"  {palabra:>12} -> NO ESTA")
+    conexion.close()
+
+    if distintas < 50_000:
+        raise SystemExit(
+            f"El diccionario tiene solo {distintas} palabras: el parseo ha fallado."
+        )
+    if len(faltan) > 2:
+        raise SystemExit(f"Faltan palabras basicas ({faltan}): el parseo ha fallado.")
 
 
 MUESTRAS = [
