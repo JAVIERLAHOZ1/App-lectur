@@ -12,12 +12,28 @@ android {
         applicationId = "com.javierlahoz.lectur"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
+    }
+
+    // Clave de firma fija. Sin esto cada compilacion firmaria con una clave
+    // distinta y Android se negaria a actualizar la app encima de la anterior,
+    // obligando a desinstalar (y perder la biblioteca) en cada version.
+    signingConfigs {
+        create("lectur") {
+            storeFile = file("lectur.keystore")
+            storePassword = "lecturlectur"
+            keyAlias = "lectur"
+            keyPassword = "lecturlectur"
+        }
     }
 
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("lectur")
+        }
         release {
+            signingConfig = signingConfigs.getByName("lectur")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
