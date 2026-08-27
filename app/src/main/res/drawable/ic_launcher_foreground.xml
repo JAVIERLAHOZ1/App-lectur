@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Libro abierto centrado en la zona segura del icono adaptativo -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M30,36 L52,40 L52,74 L30,70 Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M78,36 L56,40 L56,74 L78,70 Z" />
+    <path
+        android:fillColor="#FFB9D9E3"
+        android:pathData="M52,40 L56,40 L56,74 L52,74 Z" />
+</vector>
