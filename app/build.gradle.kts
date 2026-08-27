@@ -42,6 +42,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            // PdfBox arrastra avisos de licencia duplicados.
+            excludes += "/META-INF/{DEPENDENCIES,LICENSE,LICENSE.txt,NOTICE,NOTICE.txt}"
         }
     }
 }
@@ -60,6 +62,10 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
+
+    // Lee la estructura del PDF: indice (marcadores) y texto con posiciones,
+    // que es lo que necesita el diccionario. PdfRenderer solo dibuja imagenes.
+    implementation("com.tom-roush:pdfbox-android:2.0.27.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 }

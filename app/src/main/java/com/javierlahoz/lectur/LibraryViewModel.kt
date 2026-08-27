@@ -30,6 +30,8 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
     val themeMode: StateFlow<ThemeMode> = settings.themeMode
     val readingMode: StateFlow<ReadingMode> = settings.readingMode
     val zoom: StateFlow<Float> = settings.zoom
+    val brightness: StateFlow<Float> = settings.brightness
+    val lockRotation: StateFlow<Boolean> = settings.lockRotation
 
     private val _isImporting = MutableStateFlow(false)
     val isImporting: StateFlow<Boolean> = _isImporting.asStateFlow()
@@ -96,6 +98,10 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
     fun setThemeMode(mode: ThemeMode) = settings.setThemeMode(mode)
 
     fun setReadingMode(mode: ReadingMode) = settings.setReadingMode(mode)
+
+    fun setBrightness(value: Float) = settings.setBrightness(value)
+
+    fun setLockRotation(locked: Boolean) = settings.setLockRotation(locked)
 
     fun setZoom(value: Float) = settings.setZoom(value)
 

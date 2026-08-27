@@ -9,8 +9,13 @@ App Android muy sencilla para leer libros en PDF guardando siempre por dónde va
 - **Recuerda el progreso**: al abrir un libro vuelve exactamente a la página en la que
   lo dejaste. El progreso se guarda solo, mientras lees.
 - **Modo oscuro de verdad**: fondo negro y letras blancas, tanto en la app como en las
-  páginas del PDF (se invierten los colores al leer). Tres opciones: automático
-  (sigue al sistema), claro y oscuro.
+  páginas del PDF (se invierten los colores al leer). Cuatro opciones: automático
+  (sigue al sistema), claro, **sepia** (papel crema y tinta marrón) y oscuro.
+- **Índice del libro**: si el PDF trae marcadores, se listan los capítulos y se salta
+  a cualquiera con un toque.
+- **Diccionario**: mantén pulsada una palabra y sale su definición (Wikcionario), con
+  un botón para abrirla en la RAE. Es lo único que usa internet.
+- **Brillo propio del lector** y **bloqueo de rotación**, sin salir del libro.
 - **Añadir libros**: botón *Añadir PDF* (te deja elegir cualquier PDF de la tablet,
   Drive, Descargas...) o desde el gestor de archivos con *Abrir con → Lectur*.
 - **Gestión**: renombrar un libro, empezarlo de nuevo o eliminarlo.
@@ -31,7 +36,10 @@ perder nada.
 
 - Kotlin + Jetpack Compose (Material 3).
 - El PDF se dibuja con `android.graphics.pdf.PdfRenderer`, el motor que ya trae
-  Android: **cero librerías externas de PDF**.
+  Android. Para el índice y para saber qué palabra hay bajo el dedo se usa
+  **PdfBox-Android**, que sí sabe leer la estructura y el texto del documento.
+- El diccionario consulta la API REST del Wikcionario, por eso la app declara el
+  permiso de internet. Leer, importar y guardar el progreso sigue siendo offline.
 - El progreso y la biblioteca se guardan en un simple `library.json` dentro de la app;
   las preferencias, en `SharedPreferences`. Sin base de datos ni servidores.
 - `minSdk 26` (Android 8) — `targetSdk 35`.

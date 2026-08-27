@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BrightnessAuto
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -276,6 +277,7 @@ private fun ThemeMenu(themeMode: ThemeMode, onThemeMode: (ThemeMode) -> Unit) {
             val icon = when (themeMode) {
                 ThemeMode.SYSTEM -> Icons.Filled.BrightnessAuto
                 ThemeMode.LIGHT -> Icons.Filled.LightMode
+                ThemeMode.SEPIA -> Icons.Filled.LocalCafe
                 ThemeMode.DARK -> Icons.Filled.DarkMode
             }
             Icon(icon, contentDescription = "Tema de la aplicacion")
@@ -288,8 +290,20 @@ private fun ThemeMenu(themeMode: ThemeMode, onThemeMode: (ThemeMode) -> Unit) {
                             when (mode) {
                                 ThemeMode.SYSTEM -> "Automatico (sistema)"
                                 ThemeMode.LIGHT -> "Claro"
+                                ThemeMode.SEPIA -> "Sepia"
                                 ThemeMode.DARK -> "Oscuro"
                             }
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = when (mode) {
+                                ThemeMode.SYSTEM -> Icons.Filled.BrightnessAuto
+                                ThemeMode.LIGHT -> Icons.Filled.LightMode
+                                ThemeMode.SEPIA -> Icons.Filled.LocalCafe
+                                ThemeMode.DARK -> Icons.Filled.DarkMode
+                            },
+                            contentDescription = null
                         )
                     },
                     onClick = {

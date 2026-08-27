@@ -22,7 +22,9 @@ import com.javierlahoz.lectur.data.ThemeMode
 import com.javierlahoz.lectur.ui.LibraryScreen
 import com.javierlahoz.lectur.ui.ReaderScreen
 import com.javierlahoz.lectur.ui.theme.LecturTheme
-import com.javierlahoz.lectur.ui.theme.isDarkTheme
+import com.javierlahoz.lectur.ui.theme.pageTintOf
+import com.javierlahoz.lectur.ui.theme.resolveTheme
+import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 
 class MainActivity : ComponentActivity() {
 
@@ -31,6 +33,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        // PdfBox necesita sus recursos (fuentes) antes de leer indices o texto.
+        PDFBoxResourceLoader.init(applicationContext)
         handleViewIntent(intent)
         setContent { LecturApp(viewModel) }
     }
@@ -57,11 +61,14 @@ private fun LecturApp(viewModel: LibraryViewModel) {
     val themeMode by viewModel.themeMode.collectAsState()
     val zoom by viewModel.zoom.collectAsState()
     val readingMode by viewModel.readingMode.collectAsState()
+    val brightness by viewModel.brightness.collectAsState()
+    val lockRotation by viewModel.lockRotation.collectAsState()
     val isImporting by viewModel.isImporting.collectAsState()
     val message by viewModel.message.collectAsState()
     val openBookId by viewModel.openBookId.collectAsState()
 
-    val darkTheme = isDarkTheme(themeMode)
+    val resolvedTheme = resolveTheme(themeMode)
+    val darkTheme = resolvedTheme == ThemeMode.DARK
     val snackbarHostState = remember { SnackbarHostState() }
 
     val view = LocalView.current
@@ -87,7 +94,7 @@ private fun LecturApp(viewModel: LibraryViewModel) {
         }
     }
 
-    LecturTheme(darkTheme = darkTheme) {
+    LecturTheme(theme = resolvedTheme) {
         val openBook = books.firstOrNull { it.id == openBookId }
 
         if (openBook != null) {
@@ -95,14 +102,17 @@ private fun LecturApp(viewModel: LibraryViewModel) {
             ReaderScreen(
                 book = openBook,
                 pdfFile = viewModel.pdfFile(openBook.id),
-                darkReading = darkTheme,
+                theme = resolvedTheme,
+                pageTint = pageTintOf(resolvedTheme),
                 zoom = zoom,
                 readingMode = readingMode,
+                brightness = brightness,
+                lockRotation = lockRotation,
                 onZoomChange = viewModel::setZoom,
                 onReadingModeChange = viewModel::setReadingMode,
-                onToggleDarkReading = {
-                    viewModel.setThemeMode(if (darkTheme) ThemeMode.LIGHT else ThemeMode.DARK)
-                },
+                onThemeChange = viewModel::setThemeMode,
+                onBrightnessChange = viewModel::setBrightness,
+                onLockRotationChange = viewModel::setLockRotation,
                 onProgress = { page -> viewModel.saveProgress(openBook.id, page) },
                 onBack = viewModel::closeReader
             )
