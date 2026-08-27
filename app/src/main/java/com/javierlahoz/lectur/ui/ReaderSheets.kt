@@ -230,13 +230,13 @@ private fun DictionaryBody(
         }
 
         is DictionaryResult.NotFound -> Text(
-            text = "No aparece en el Wikcionario. Puede ser una forma conjugada o un nombre propio.",
+            text = "No esta en el diccionario. Puede ser un nombre propio, una palabra en " +
+                "otro idioma o una forma poco habitual.",
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         is DictionaryResult.Failed -> Text(
-            text = "No se ha podido consultar (${result.message}). El diccionario necesita " +
-                "conexion a internet.",
+            text = "No se ha podido consultar: ${result.message}.",
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }

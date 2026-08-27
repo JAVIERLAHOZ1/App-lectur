@@ -13,8 +13,10 @@ App Android muy sencilla para leer libros en PDF guardando siempre por dónde va
   (sigue al sistema), claro, **sepia** (papel crema y tinta marrón) y oscuro.
 - **Índice del libro**: si el PDF trae marcadores, se listan los capítulos y se salta
   a cualquiera con un toque.
-- **Diccionario**: mantén pulsada una palabra y sale su definición (Wikcionario), con
-  un botón para abrirla en la RAE. Es lo único que usa internet.
+- **Diccionario offline**: mantén pulsada una palabra y sale su definición al momento,
+  **sin conexión** — el diccionario viaja dentro de la app. Si tocas una forma
+  conjugada ("dijo") también te enseña la del infinitivo ("decir"). Hay un botón para
+  abrirla en la RAE, que sí abre el navegador.
 - **Brillo propio del lector** y **bloqueo de rotación**, sin salir del libro.
 - **Añadir libros**: botón *Añadir PDF* (te deja elegir cualquier PDF de la tablet,
   Drive, Descargas...) o desde el gestor de archivos con *Abrir con → Lectur*.
@@ -38,8 +40,9 @@ perder nada.
 - El PDF se dibuja con `android.graphics.pdf.PdfRenderer`, el motor que ya trae
   Android. Para el índice y para saber qué palabra hay bajo el dedo se usa
   **PdfBox-Android**, que sí sabe leer la estructura y el texto del documento.
-- El diccionario consulta la API REST del Wikcionario, por eso la app declara el
-  permiso de internet. Leer, importar y guardar el progreso sigue siendo offline.
+- El diccionario es un SQLite generado desde el volcado del Wikcionario en español
+  (licencia CC BY-SA) con `tools/build_dictionary.py`, que se ejecuta en GitHub
+  Actions y se empaqueta dentro del APK. La app **no declara permiso de internet**.
 - El progreso y la biblioteca se guardan en un simple `library.json` dentro de la app;
   las preferencias, en `SharedPreferences`. Sin base de datos ni servidores.
 - `minSdk 26` (Android 8) — `targetSdk 35`.

@@ -97,7 +97,7 @@ import com.javierlahoz.lectur.data.Book
 import com.javierlahoz.lectur.data.ReadingMode
 import com.javierlahoz.lectur.data.SettingsStore
 import com.javierlahoz.lectur.data.ThemeMode
-import com.javierlahoz.lectur.dict.DictionaryClient
+import com.javierlahoz.lectur.dict.OfflineDictionary
 import com.javierlahoz.lectur.pdf.OutlineEntry
 import com.javierlahoz.lectur.pdf.PdfLoadState
 import com.javierlahoz.lectur.pdf.PdfPageLoader
@@ -355,7 +355,7 @@ private fun ReaderContent(
                         lookup = LookupState.NoWord
                     } else {
                         lookup = LookupState.Searching(word)
-                        lookup = LookupState.Ready(DictionaryClient.define(word))
+                        lookup = LookupState.Ready(OfflineDictionary.define(context, word))
                     }
                 }
             }

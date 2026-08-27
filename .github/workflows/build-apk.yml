@@ -27,6 +27,29 @@ jobs:
       - name: Preparar el SDK de Android
         uses: android-actions/setup-android@v3
 
+      # El diccionario offline se genera del volcado del Wikcionario. Tarda un
+      # buen rato, asi que se guarda en cache y solo se rehace si cambia el
+      # generador (o si se sube el numero de version de la clave).
+      - name: Cache del diccionario
+        id: cache-diccionario
+        uses: actions/cache@v4
+        with:
+          path: diccionario.db
+          key: diccionario-v1-${{ hashFiles('tools/build_dictionary.py') }}
+
+      - name: Comprobar el generador del diccionario
+        run: python3 tools/build_dictionary.py --autotest
+
+      - name: Generar el diccionario
+        if: steps.cache-diccionario.outputs.cache-hit != 'true'
+        run: python3 tools/build_dictionary.py --salida diccionario.db
+
+      - name: Incluir el diccionario en la app
+        run: |
+          mkdir -p app/src/main/assets
+          cp diccionario.db app/src/main/assets/diccionario.db
+          ls -lh app/src/main/assets/diccionario.db
+
       - name: Compilar
         run: |
           chmod +x ./gradlew
