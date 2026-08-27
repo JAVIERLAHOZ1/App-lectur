@@ -56,6 +56,7 @@ private fun LecturApp(viewModel: LibraryViewModel) {
     val books by viewModel.books.collectAsState()
     val themeMode by viewModel.themeMode.collectAsState()
     val zoom by viewModel.zoom.collectAsState()
+    val readingMode by viewModel.readingMode.collectAsState()
     val isImporting by viewModel.isImporting.collectAsState()
     val message by viewModel.message.collectAsState()
     val openBookId by viewModel.openBookId.collectAsState()
@@ -96,7 +97,9 @@ private fun LecturApp(viewModel: LibraryViewModel) {
                 pdfFile = viewModel.pdfFile(openBook.id),
                 darkReading = darkTheme,
                 zoom = zoom,
+                readingMode = readingMode,
                 onZoomChange = viewModel::setZoom,
+                onReadingModeChange = viewModel::setReadingMode,
                 onToggleDarkReading = {
                     viewModel.setThemeMode(if (darkTheme) ThemeMode.LIGHT else ThemeMode.DARK)
                 },

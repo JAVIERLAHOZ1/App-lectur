@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.javierlahoz.lectur.data.Book
 import com.javierlahoz.lectur.data.LibraryRepository
+import com.javierlahoz.lectur.data.ReadingMode
 import com.javierlahoz.lectur.data.SettingsStore
 import com.javierlahoz.lectur.data.ThemeMode
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +28,7 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     val themeMode: StateFlow<ThemeMode> = settings.themeMode
+    val readingMode: StateFlow<ReadingMode> = settings.readingMode
     val zoom: StateFlow<Float> = settings.zoom
 
     private val _isImporting = MutableStateFlow(false)
@@ -92,6 +94,8 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun setThemeMode(mode: ThemeMode) = settings.setThemeMode(mode)
+
+    fun setReadingMode(mode: ReadingMode) = settings.setReadingMode(mode)
 
     fun setZoom(value: Float) = settings.setZoom(value)
 

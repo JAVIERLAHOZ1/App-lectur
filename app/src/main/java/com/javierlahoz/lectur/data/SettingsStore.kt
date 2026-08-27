@@ -13,7 +13,23 @@ enum class ThemeMode {
     }
 }
 
-/** Preferencias sencillas de la app: tema y tamano de pagina en el lector. */
+/** Como se pasan las paginas en el lector. */
+enum class ReadingMode {
+    /** Scroll vertical continuo, una pagina detras de otra. */
+    SCROLL,
+
+    /** Una pagina completa que se pasa deslizando de lado. */
+    PAGE,
+
+    /** Modo libro: dos paginas abiertas una junto a otra (en horizontal). */
+    BOOK;
+
+    companion object {
+        fun from(name: String?): ReadingMode = entries.firstOrNull { it.name == name } ?: SCROLL
+    }
+}
+
+/** Preferencias sencillas de la app: tema, modo de lectura y zoom. */
 class SettingsStore private constructor(context: Context) {
 
     private val prefs = context.applicationContext
@@ -22,12 +38,20 @@ class SettingsStore private constructor(context: Context) {
     private val _themeMode = MutableStateFlow(ThemeMode.from(prefs.getString(KEY_THEME, null)))
     val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
 
+    private val _readingMode = MutableStateFlow(ReadingMode.from(prefs.getString(KEY_READING, null)))
+    val readingMode: StateFlow<ReadingMode> = _readingMode.asStateFlow()
+
     private val _zoom = MutableStateFlow(prefs.getFloat(KEY_ZOOM, 1f))
     val zoom: StateFlow<Float> = _zoom.asStateFlow()
 
     fun setThemeMode(mode: ThemeMode) {
         _themeMode.value = mode
         prefs.edit().putString(KEY_THEME, mode.name).apply()
+    }
+
+    fun setReadingMode(mode: ReadingMode) {
+        _readingMode.value = mode
+        prefs.edit().putString(KEY_READING, mode.name).apply()
     }
 
     fun setZoom(value: Float) {
@@ -42,6 +66,7 @@ class SettingsStore private constructor(context: Context) {
         const val ZOOM_STEP = 0.25f
 
         private const val KEY_THEME = "theme_mode"
+        private const val KEY_READING = "reading_mode"
         private const val KEY_ZOOM = "reader_zoom"
 
         @Volatile

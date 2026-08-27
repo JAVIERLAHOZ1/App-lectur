@@ -14,9 +14,14 @@ App Android muy sencilla para leer libros en PDF guardando siempre por dónde va
 - **Añadir libros**: botón *Añadir PDF* (te deja elegir cualquier PDF de la tablet,
   Drive, Descargas...) o desde el gestor de archivos con *Abrir con → Lectur*.
 - **Gestión**: renombrar un libro, empezarlo de nuevo o eliminarlo.
-- **Lectura cómoda**: desplazamiento vertical continuo, zoom por pasos, barra para
-  saltar a cualquier página y pantalla que no se apaga mientras lees. Un toque en la
-  página oculta o muestra los controles.
+- **Tres modos de lectura** (se eligen con el icono de la barra inferior y se recuerdan):
+  - *Scroll continuo*: una página detrás de otra, con zoom por pasos.
+  - *Página a página*: la página entera ajustada a la pantalla, se pasa deslizando.
+  - *Libro*: dos páginas abiertas una junto a otra, como un libro de papel (con la
+    tablet en horizontal; en vertical pasa sola a una página).
+- **Lectura cómoda**: barra para saltar a cualquier página, pantalla que no se apaga y
+  un toque en el centro oculta o muestra los controles. En modo página y libro, tocar
+  el borde izquierdo o derecho pasa página.
 
 Todo funciona **sin internet** y sin cuentas: los libros se copian al almacenamiento
 privado de la app, así que el PDF original de la tablet puedes borrarlo o moverlo sin
